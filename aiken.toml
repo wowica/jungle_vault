@@ -1,0 +1,14 @@
+name = "wowica/jungle_vault"
+version = "0.0.0"
+license = "Apache-2.0"
+description = "Aiken contracts for project 'wowica/jungle_vault'"
+
+[repository]
+user = "wowica"
+project = "jungle_vault"
+platform = "github"
+
+[[dependencies]]
+name = "aiken-lang/stdlib"
+version = "1.6.0"
+source = "github"
