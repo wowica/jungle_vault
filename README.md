@@ -1,55 +1,13 @@
-# jungle_vault
+# JUNGLE Vault 🔐
 
-Write validators in the `validators` folder, and supporting functions in the `lib` folder using `.ak` as a file extension.
+This is a slightly modified version of the [Gift Card](https://aiken-lang.org/example--gift-card) demo application using [Aiken](https://aiken-lang.org/) for on-chain Cardano code and [Lucid](https://lucid.spacebudz.io/) for off-chain transaction building.
 
-For example, as `validators/always_true.ak`
+## Running
 
-```gleam
-validator {
-  fn spend(_datum: Data, _redeemer: Data, _context: Data) -> Bool {
-    True
-  }
-}
-```
+The application runs using Lucid emulator and requires [Deno](https://docs.deno.com/runtime/manual/getting_started/installation) to be installed.
 
-## Building
+To run the application, run the following command:  
 
-```sh
-aiken build
-```
+`deno run -A run_emulation.ts`
 
-## Testing
-
-You can write tests in any module using the `test` keyword. For example:
-
-```gleam
-test foo() {
-  1 + 1 == 2
-}
-```
-
-To run all tests, simply do:
-
-```sh
-aiken check
-```
-
-To run only tests matching the string `foo`, do:
-
-```sh
-aiken check -m foo
-```
-
-## Documentation
-
-If you're writing a library, you might want to generate an HTML documentation for it.
-
-Use:
-
-```sh
-aiken docs
-```
-
-## Resources
-
-Find more on the [Aiken's user manual](https://aiken-lang.org).
+The first time it runs, Deno will first download all dependencies. It does not, however, communicate with a real Cardano network nor does it depend on any funds.
