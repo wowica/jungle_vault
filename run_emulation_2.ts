@@ -1,4 +1,4 @@
-// $ deno run -A run_emulation.ts
+// $ deno run -A run_emulation_2.ts
 import {
   Address,
   applyDoubleCborEncoding,
@@ -21,12 +21,19 @@ import blueprint from "./plutus.json" assert { type: "json" };
 // Define wallets, balances and Custom network
 
 const privateKeyAlice = generatePrivateKey();
+const privateKeyBob = generatePrivateKey();
 
 const addressAlice = await (await Lucid.new(undefined, "Custom"))
   .selectWalletFromPrivateKey(privateKeyAlice).wallet.address();
 
+const addressBob = await (await Lucid.new(undefined, "Custom"))
+  .selectWalletFromPrivateKey(privateKeyBob).wallet.address();
+
 const emulator = new Emulator([{
   address: addressAlice,
+  assets: { lovelace: 100_000_000n },
+}, {
+  address: addressBob,
   assets: { lovelace: 100_000_000n },
 }]);
 
@@ -37,7 +44,7 @@ const masterKey = blueprint.validators.find((v) =>
 );
 const redeem = blueprint.validators.find((v) => v.title === "mint.redeem");
 
-const tokenName = "MASTER-KEY";
+const tokenName = "JUNGLE-GIFT-CARD";
 let policyId, masterKeyMintingPolicy, assetName, redeemValidator, lockAddress;
 
 const applyParamsToContract = (outputReference: OutRef) => {
@@ -67,7 +74,11 @@ const applyParamsToContract = (outputReference: OutRef) => {
   });
 };
 
-const mintMasterKey = async (minterPrivateKey: PrivateKey) => {
+const mintMasterKey = async (
+  minterPrivateKey: PrivateKey,
+  receiverAddress: Address,
+  giftAmountInAda: number,
+) => {
   const owner: Lucid = lucid.selectWalletFromPrivateKey(minterPrivateKey);
   const [utxo] = await owner.wallet.getUtxos();
   //   console.log({ utxo });
@@ -104,18 +115,19 @@ const mintMasterKey = async (minterPrivateKey: PrivateKey) => {
         // doesn't use it so we can just pass in anything.
         inline: Data.void(),
       },
-      { lovelace: BigInt(50_000_000) },
-    )
+      { lovelace: BigInt(giftAmountInAda * 1_000_000) },
+    ).payToAddress(receiverAddress, { [assetName]: 1n })
     .complete()
     .then((tx) => tx.sign().complete())
     .then((tx) => tx.submit());
+
   console.log(txHash);
 };
 
-const redeemAssets = async (minterPrivateKey: PrivateKey) => {
+const redeemGift = async (minterPrivateKey: PrivateKey) => {
   const owner: Lucid = lucid.selectWalletFromPrivateKey(minterPrivateKey);
   const utxos = await lucid.utxosAt(lockAddress);
-  //   console.log({ utxos });
+  // console.log({ utxos });
 
   const burnRedeemer = Data.to(new Constr(1, []));
 
@@ -151,29 +163,31 @@ const redeemAssets = async (minterPrivateKey: PrivateKey) => {
   console.log({ txHash });
 };
 
+const bobGiftAmount = 22;
+console.log(
+  `Alice minting Master Key, sending to Bob and paying ${bobGiftAmount} to contract`,
+);
+await mintMasterKey(privateKeyAlice, addressBob, bobGiftAmount);
+emulator.awaitBlock(4);
+
+console.log("Contract after receiving payment");
+console.log(await getBalanceAtAddress(lockAddress));
+
 try {
-  console.log("Alice before minting Master Key");
-  console.log(await getBalanceAtAddress(addressAlice));
-
-  console.log("Alice minting Master Key and paying to contract");
-  await mintMasterKey(privateKeyAlice);
+  console.log("Alice attempting to redeem Gift");
+  await redeemGift(privateKeyAlice);
   emulator.awaitBlock(4);
-
-  console.log("Alice after minting Master Key");
-  console.log(await getBalanceAtAddress(addressAlice));
-
-  console.log("Contract after receiving payment");
-  console.log(await getBalanceAtAddress(lockAddress));
-
-  console.log("Alice redeeming Master Key");
-  await redeemAssets(privateKeyAlice);
-  emulator.awaitBlock(4);
-
-  console.log("Alice after redeeming Master Key");
-  console.log(await getBalanceAtAddress(addressAlice));
 } catch (e) {
+  console.log("🚫 Alice cannot redeem Gift 🚫");
   console.log("error " + e);
 }
+
+console.log("Bob redeeming Master Key");
+await redeemGift(privateKeyBob);
+emulator.awaitBlock(4);
+
+console.log("Bob after minting Master Key");
+console.log(await getBalanceAtAddress(addressBob));
 
 function getBalanceAtAddress(address: Address): Promise<UTxO> {
   return lucid.utxosAt(address);
