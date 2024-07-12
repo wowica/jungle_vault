@@ -12,10 +12,8 @@ validator(utxo_ref: OutputReference, token_name: ByteArray) {
     let ScriptContext { transaction: Transaction { inputs, mint, .. }, .. } =
       ctx
     // Pattern-match to get the minted tokens and Fail if it's not a single asset minted
-    let asset_pairs =
+    expect [Pair(asset_name, amount)] =
       mint |> from_minted_value() |> tokens(policy_id) |> to_pairs()
-
-    expect [Pair(asset_name, amount)] = asset_pairs
 
     // Check if the transaction consumes the utxo_ref passed as parameter
     let is_ouput_consumed =

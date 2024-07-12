@@ -16,13 +16,11 @@ validator(token_name: ByteArray, utxo_ref: OutputReference) {
 
     let Transaction { inputs, mint, .. } = transaction
 
-    let asset_pairs =
+    expect [Pair(asset_name, amount)] =
       mint
         |> value.from_minted_value
         |> value.tokens(policy_id)
         |> dict.to_pairs()
-
-    expect [Pair(asset_name, amount)] = asset_pairs
 
     when rdmr is {
       Mint -> {
