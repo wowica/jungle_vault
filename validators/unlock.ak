@@ -24,7 +24,6 @@ validator {
       list.has(context.transaction.extra_signatories, datum.owner)
 
     must_be_signed && redeemer.message == unlock_message
-
     // let MyDatum { owner } = datum
     // let MyRedeemer { message } = redeemer
     // let ScriptContext { purpose, .. } = context
