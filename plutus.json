@@ -91,6 +91,23 @@
       ],
       "compiledCode": "59018f0100003232323232323222322253330063253330073370e900018041baa001132323232533300e301100213232533300d323300100100622533301200114a0264a66602066ebcc054c048dd5180a8010078a5113300300300130150011533300d3370e9001000899b8f00200a14a02940dd698070011bae300c00116300f00132533300a3370e900118059baa00114bd6f7b63009bab300f300c375400264646600200264660020026eacc044c048c048c048c048014894ccc04000452f5bded8c0264646464a66602266e45220100002153330113371e91010000210031005133015337606ea4008dd3000998030030019bab3012003375c60200046028004602400244a66601e002298103d87a800013232323253330103372200e0042a66602066e3c01c0084cdd2a4000660286e980052f5c02980103d87a8000133006006003375660220066eb8c03c008c04c008c044004dd7180718059baa0033758601a00260126ea8c030c024dd50010b1805980618041baa00114984d958dd7000ab9a5573aaae7955cfaba05742ae881",
       "hash": "876ec4f00341ad45919865def59a436aa176e3432957327231ae974e"
+    },
+    {
+      "title": "unlock.unlock",
+      "datum": {
+        "title": "datum",
+        "schema": {
+          "$ref": "#/definitions/unlock~1MyDatum"
+        }
+      },
+      "redeemer": {
+        "title": "redeemer",
+        "schema": {
+          "$ref": "#/definitions/unlock~1MyRedeemer"
+        }
+      },
+      "compiledCode": "58e4010000323232323232232232253330063253330073322323300100100322533300e00114a0264a66601866e3cdd718080010020a511330030030013010001375860166018601860186018601860186018601860126ea8c004c024dd50011bae30013009375400c266e3cdd7180098049baa00448810b61696b656e20726f636b730014a04601600229309b2b299980219b8748000c014dd500089919299980498058010a4c2c6eb8c024004c018dd50008b299980119b8748000c00cdd500089919299980398048010a4c2c6eb8c01c004c010dd50008b2b9a5573aaae7955cfaba15745",
+      "hash": "643e50b5d3cb3c55ad917a3bec67a8452e7c7e2395f45bcc2a3b6888"
     }
   ],
   "definitions": {
@@ -156,6 +173,38 @@
           "dataType": "constructor",
           "index": 1,
           "fields": []
+        }
+      ]
+    },
+    "unlock/MyDatum": {
+      "title": "MyDatum",
+      "anyOf": [
+        {
+          "title": "MyDatum",
+          "dataType": "constructor",
+          "index": 0,
+          "fields": [
+            {
+              "title": "owner",
+              "$ref": "#/definitions/ByteArray"
+            }
+          ]
+        }
+      ]
+    },
+    "unlock/MyRedeemer": {
+      "title": "MyRedeemer",
+      "anyOf": [
+        {
+          "title": "MyRedeemer",
+          "dataType": "constructor",
+          "index": 0,
+          "fields": [
+            {
+              "title": "message",
+              "$ref": "#/definitions/ByteArray"
+            }
+          ]
         }
       ]
     }
